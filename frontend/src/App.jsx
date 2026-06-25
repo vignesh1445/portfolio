@@ -1,205 +1,140 @@
-import { useEffect, useState } from "react";
+import React from "react";
 import "./App.css";
 
-function App() {
-  const [students, setStudents] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
-
-  useEffect(() => {
-    getStudents();
-  }, []);
-
-  const getStudents = async () => {
-    try {
-      setLoading(true);
-
-      const studentsRes = await fetch(`${API_URL}/students`);
-      const attendanceRes = await fetch(`${API_URL}/attendance/today`);
-
-      const studentsData = await studentsRes.json();
-      const attendanceData = await attendanceRes.json();
-
-      const attendanceMap = {};
-
-      attendanceData.forEach((record) => {
-        const studentId = record.studentId?._id || record.studentId;
-        attendanceMap[studentId] = record.status;
-      });
-
-      const updated = studentsData.map((s) => ({
-        ...s,
-        attendance: attendanceMap[s._id] || "",
-      }));
-
-      setStudents(updated);
-    } catch (err) {
-      console.error("Error fetching data:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const saveAttendance = async (id, status) => {
-    await fetch(`${API_URL}/attendance`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        studentId: id,
-        status,
-        date: new Date().toISOString().split("T")[0],
-      }),
-    });
-  };
-
-  const mark = (id, status) => {
-    if (submitted) return;
-
-    setStudents((prev) =>
-      prev.map((s) =>
-        s._id === id ? { ...s, attendance: status } : s
-      )
-    );
-
-    saveAttendance(id, status);
-  };
-
-  const submitAll = () => {
-    setSubmitted(true);
-  };
-
-  const resetAll = async () => {
-    await fetch(`${API_URL}/attendance/today`, {
-      method: "DELETE",
-    });
-
-    setStudents((prev) =>
-      prev.map((s) => ({ ...s, attendance: "" }))
-    );
-
-    setSubmitted(false);
-  };
-
-  const filtered = students.filter(
-    (s) =>
-      s.name.toLowerCase().includes(search.toLowerCase()) ||
-      String(s.rollNo).includes(search)
-  );
-
-  const present = students.filter((s) => s.attendance === "P").length;
-  const absent = students.filter((s) => s.attendance === "A").length;
-
+function Portfolio() {
   return (
-    <div className="page">
+    <div className="portfolio">
 
-      {/* HEADER */}
-      <div className="header">
-        <h1>Smart Attendance Panel</h1>
-        <p>Mark, Track & Manage Student Attendance</p>
+      {/* ================= HERO ================= */}
+      <section className="hero" id="home">
+        <h1>Hi, I'm Vigneshwar</h1>
+        <h2>MERN Stack Developer</h2>
 
-        {/* 🔥 LIVE PROJECT LINK */}
-        <a
-          href="https://your-live-project-link.com"
-          target="_blank"
-          rel="noreferrer"
-          className="live-link"
-        >
-          🔗 View Live Project
-        </a>
-      </div>
+        <p>
+          I am a passionate Full Stack Developer specializing in building
+          modern, responsive, and scalable web applications using React,
+          Node.js, Express, and MongoDB.
+        </p>
 
-      {/* SEARCH + ACTIONS */}
-      <div className="top-bar">
-        <input
-          placeholder="🔍 Search student..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-
-        <div className="actions">
-          <button className="reset" onClick={resetAll}>
-            Reset
-          </button>
-
-          <button className="submit" onClick={submitAll}>
-            Submit
-          </button>
+        <div className="hero-buttons">
+          <a href="#projects">View Projects</a>
+          <a href="#contact">Contact Me</a>
         </div>
-      </div>
+      </section>
 
-      {/* STATS */}
-      <div className="stats">
-        <div className="card green">
-          Present <span>{present}</span>
+      {/* ================= ABOUT ================= */}
+      <section className="about" id="about">
+        <h2>About Me</h2>
+        <p>
+          I am an Electronics and Instrumentation Engineering student with
+          strong interest in software development. I enjoy building real-world
+          projects and improving my skills in full stack development.
+        </p>
+      </section>
+
+      {/* ================= OBJECTIVE ================= */}
+      <section className="objective">
+        <h2>Career Objective</h2>
+        <p>
+          To secure a challenging position in a reputed organization where I
+          can apply my technical skills in MERN stack development and grow as a
+          professional software engineer.
+        </p>
+      </section>
+
+      {/* ================= SKILLS ================= */}
+      <section>
+        <h2>Skills</h2>
+        <div className="skill-container">
+          <div className="skill">C</div>
+          <div className="skill">Python</div>
+          <div className="skill">Java</div>
+          <div className="skill">JavaScript</div>
+          <div className="skill">React.js</div>
+          <div className="skill">Node.js</div>
+          <div className="skill">Express.js</div>
+          <div className="skill">MongoDB</div>
+          <div className="skill">HTML</div>
+          <div className="skill">CSS</div>
         </div>
-        <div className="card red">
-          Absent <span>{absent}</span>
+      </section>
+
+      {/* ================= PROJECTS ================= */}
+      <section id="projects">
+        <h2>Projects</h2>
+
+        {/* PROJECT 1 */}
+        <div className="project-card">
+          <h3>Smart Attendance Management System (MERN Stack)</h3>
+          <p>
+            A full-stack web application to manage daily student attendance.
+            Built using React, Node.js, Express, and MongoDB Atlas.
+            Features include real-time attendance marking, search,
+            reset functionality, and attendance dashboard.
+          </p>
+          <p><b>Tech Stack:</b> React, Node.js, Express, MongoDB</p>
+
+          <p>
+            🔗 Live Project:{" "}
+            <a href="https://your-live-project-link.com" target="_blank" rel="noreferrer">
+              Click Here
+            </a>
+          </p>
+
+          <p>
+            💻 GitHub:{" "}
+            <a href="https://github.com/your-username" target="_blank" rel="noreferrer">
+              View Code
+            </a>
+          </p>
         </div>
-        <div className="card blue">
-          Total <span>{students.length}</span>
+
+        {/* PROJECT 2 (Optional Example) */}
+        <div className="project-card">
+          <h3>IoT Based Monitoring System</h3>
+          <p>
+            An IoT project used for real-time sensor data monitoring and
+            visualization for industrial applications.
+          </p>
         </div>
-        <div className="card purple">
-          Marked <span>{present + absent}</span>
+      </section>
+
+      {/* ================= EDUCATION ================= */}
+      <section className="education">
+        <h2>Education</h2>
+
+        <div className="project-card">
+          <h3>B.E. Electronics and Instrumentation Engineering</h3>
+          <p>Kongu Engineering College</p>
+          <p>CGPA: 7.77</p>
         </div>
-      </div>
+      </section>
 
-      {/* TABLE */}
-      {loading ? (
-        <div className="loading">Loading students...</div>
-      ) : (
-        <div className="table-box">
-          <table>
-            <thead>
-              <tr>
-                <th>Roll No</th>
-                <th>Name</th>
-                <th>Actions</th>
-                <th>Status</th>
-              </tr>
-            </thead>
+      {/* ================= CONTACT ================= */}
+      <section className="contact" id="contact">
+        <h2>Contact Me</h2>
 
-            <tbody>
-              {filtered.map((s) => (
-                <tr key={s._id}>
-                  <td>{s.rollNo}</td>
-                  <td>{s.name}</td>
+        <p>Email: vigneshward.24eie@kongu.edu</p>
+        <p>Phone: +91-XXXXXXXXXX</p>
 
-                  <td>
-                    <button
-                      disabled={submitted}
-                      className="btn present"
-                      onClick={() => mark(s._id, "P")}
-                    >
-                      Present
-                    </button>
+        <div className="socials">
+          <a href="https://github.com/your-username" target="_blank" rel="noreferrer">
+            GitHub
+          </a>
 
-                    <button
-                      disabled={submitted}
-                      className="btn absent"
-                      onClick={() => mark(s._id, "A")}
-                    >
-                      Absent
-                    </button>
-                  </td>
-
-                  <td>
-                    {s.attendance === "P"
-                      ? "🟢 Present"
-                      : s.attendance === "A"
-                      ? "🔴 Absent"
-                      : "—"}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <a href="https://linkedin.com/in/your-profile" target="_blank" rel="noreferrer">
+            LinkedIn
+          </a>
         </div>
-      )}
+      </section>
+
+      {/* ================= FOOTER ================= */}
+      <footer>
+        <p>© 2026 Vigneshwar | MERN Stack Developer</p>
+      </footer>
+
     </div>
   );
 }
 
-export default App;
+export default Portfolio;
